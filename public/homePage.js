@@ -5,22 +5,20 @@ const ratesBoard = new RatesBoard;
 const moneyManager = new MoneyManager;
 const favoritesWidget = new FavoritesWidget;
 
-
-
-function updateProfile() {
+const updateProfile = () => {
     ApiConnector.current(response => {
         ProfileWidget.showProfile(response.data);
     });
 }
 
-function getRates() { 
+const getRates = () => { 
     ApiConnector.getStocks(response => {
         ratesBoard.clearTable();
         ratesBoard.fillTable(response.data);
     });
 }
 
-function getFavorites() {
+const getFavorites = () => {
     ApiConnector.getFavorites(response => {
         if (response.success) {
             favoritesWidget.clearTable();
@@ -36,62 +34,62 @@ logoutButton.action = () => {
     });
 }
 
-moneyManager.addMoneyCallback = function(data) {
+moneyManager.addMoneyCallback = (data) => {
     ApiConnector.addMoney(data, response => {
         if (response.success) {
-            updateProfile();
-            this.setMessage(response.success, "Счет успешно пополнен.");
+            ProfileWidget.showProfile(response.data);
+            moneyManager.setMessage(response.success, "Счет успешно пополнен.");
         }
         else {
-            this.setMessage(response.success, `Ошибка пополнения счета: ${response.error}`);
+            moneyManager.setMessage(response.success, `Ошибка пополнения счета: ${response.error}`);
         }
     });
 }
 
-moneyManager.conversionMoneyCallback = function(data) {
+moneyManager.conversionMoneyCallback = (data) => {
     ApiConnector.convertMoney(data, response => {
         if (response.success) {
-            updateProfile();
-            this.setMessage(response.success, "Валюта успешно конвертирована.");
+            ProfileWidget.showProfile(response.data);
+            moneyManager.setMessage(response.success, "Валюта успешно конвертирована.");
         }
         else {
-            this.setMessage(response.success, `Ошибка конвертации: ${response.error}`);
+            moneyManager.setMessage(response.success, `Ошибка конвертации: ${response.error}`);
         }
     });
 }
 
-moneyManager.sendMoneyCallback = function(data) {
+moneyManager.sendMoneyCallback = (data) => {
     ApiConnector.transferMoney(data, response => {
         if (response.success) {
-            updateProfile();
-            this.setMessage(response.success, "Операция перевода успешна.");
+            ProfileWidget.showProfile(response.data);
+            moneyManager.setMessage(response.success, "Операция перевода успешна.");
         }
         else {
-            this.setMessage(response.success, `Ошибка перевода: ${response.error}`);
+            moneyManager.setMessage(response.success, `Ошибка перевода: ${response.error}`);
         }
     });
 }
 
-favoritesWidget.addUserCallback = function(data) {
+favoritesWidget.addUserCallback = (data) => {
     ApiConnector.addUserToFavorites(data, response => {
-        if (response.success) {
+        if (response.success) {          
             getFavorites();
-            this.setMessage(response.success, "Пользователь успешно добавлен в список избранных.");
+            favoritesWidget.setMessage(response.success, "Пользователь успешно добавлен в список избранных.");
         }
         else {
-            this.setMessage(response.success, `Пользователь не был добавлен в избранное: ${response.error}`);
+            tfavoritesWidget.setMessage(response.success, `Пользователь не был добавлен в избранное: ${response.error}`);
         }
     });
 }
 
-favoritesWidget.removeUserCallback = function(data) {
+favoritesWidget.removeUserCallback = (data) => {
     ApiConnector.removeUserFromFavorites(data, response => {
         if (response.success) {
             getFavorites();
-            this.setMessage(response.success, "Пользователь успешно удален из списка избранных.");
+            favoritesWidget.setMessage(response.success, "Пользователь успешно удален из списка избранных.");
         }
         else {
-            this.setMessage(response.success, `Ошибка удаления пользователя из списка избранных: ${response.error}`);
+            favoritesWidget.setMessage(response.success, `Ошибка удаления пользователя из списка избранных: ${response.error}`);
         }
     });
 }
